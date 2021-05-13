@@ -1,5 +1,5 @@
 # Lako
-Easy, Minimal & Expandable Programming Language created with Rust based on the awesome Crafting Interpreters https://craftinginterpreters.com/
+Small & Easy Programming Language created with Rust based on the awesome Crafting Interpreters https://craftinginterpreters.com/
 
 Lako means Easy in Croatian/Bosnian
 
