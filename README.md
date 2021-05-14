@@ -31,13 +31,13 @@ Not started yet...
 
 ## Lako Language
 
-For now it mirrors the basic capabilities of Lox [Crafting Interpreters](https://craftinginterpreters.com/the-lox-language.html)
+For now it mirrors the basic capabilities of [Lox](https://craftinginterpreters.com/the-lox-language.html)
 
 * High level: dynamic typing, automatic memory management.
 * Data types: booleans, numbers, strings, nil (ugh).
 * Expressions: arithmetic, comparison / equality, logical operators, precedence / grouping.
-* Syntax, Statements & Control Flow: Follows C based languages for familiarity.
+* Syntax, Statements & Control Flow: follows C based languages for familiarity.
 * Functions are first class.
 * OOP: Classes & Inheritance.
 * Minuscule Standard Library: starting off with just print & clock
-* Programmed in Rust
+* Created in Rust
