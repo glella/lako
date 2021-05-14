@@ -7,13 +7,17 @@ Follows closely the book to produce an Interpreted and a Compiled version as an 
 
 Second phase will add refinements and capabilities to make it a moderately useful tiny language.
 
+
 ## Interpreted version
 
-Status: Finished & tested scanner and tokenizer
+Status: Finished & tested scanner and tokenizer. 
+
+For now it just prints the tokens back.
+
 
 ###### Usage
 
-As a repl. Just launch Lako:
+As a repl. Just launch Lako. To exit Ctrl-c.
 
 ```
 ./lako
@@ -28,6 +32,7 @@ With source file. ie with "test.lak":
 ## Bytecode compiled version
 
 Not started yet...
+
 
 ## Lako Language
 
