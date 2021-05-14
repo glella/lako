@@ -29,8 +29,8 @@ pub enum TokenType {
     Less,
     LessEqual,
 
-    // Literals. Encoded in the enum. We do not need the `Object literal` used in the book
-    Identifier,
+    // Literals - Encoded in the enum
+    Identifier { literal: String },
     String { literal: String },
     Number { literal: f64 },
 
@@ -86,8 +86,8 @@ pub struct Token {
 }
 
 impl Token {
-    pub fn new(t_type: TokenType, lexeme: &str, line: i32) -> Self {
-        Self {
+    pub fn new(t_type: TokenType, lexeme: &str, line: i32) -> Token {
+        Token {
             t_type,
             lexeme: lexeme.to_string(),
             line,
@@ -100,6 +100,9 @@ impl fmt::Display for Token {
         match &self.t_type {
             TokenType::String { literal } => write!(f, "String {:?} {:?}", self.lexeme, literal),
             TokenType::Number { literal } => write!(f, "Number {:?} {:?}", self.lexeme, literal),
+            TokenType::Identifier { literal } => {
+                write!(f, "Identifier {:?} {:?}", self.lexeme, literal)
+            }
             _ => write!(f, "{:?} {:?}", self.t_type, self.lexeme),
         }
     }

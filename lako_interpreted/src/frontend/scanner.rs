@@ -32,13 +32,12 @@ impl Scanner {
     }
 
     // Helper methods
-    // TODO: Try interators peekable: peek & next methods
-    // peek next char
+    // Peek next char without advancing
     fn peek(&self) -> char {
         self.source.chars().nth(self.current).unwrap_or('\0')
     }
 
-    // peek char following the next
+    // peek 1 char further from regular peek
     fn peek_next(&self) -> char {
         self.source.chars().nth(self.current + 1).unwrap_or('\0')
     }
@@ -61,6 +60,7 @@ impl Scanner {
         self.tokens.push(Token::new(t_type, text, self.line))
     }
 
+    // Process identifiers
     fn identifier(&mut self) {
         while self.peek().is_alphanumeric() || self.peek() == '_' {
             self.advance();
@@ -72,7 +72,14 @@ impl Scanner {
             .get(self.start..self.current)
             .expect("Unexpected end.");
 
-        let t_type: TokenType = KEYWORDS.get(text).cloned().unwrap_or(TokenType::Identifier);
+        //let t_type: TokenType = KEYWORDS.get(text).cloned().unwrap_or(TokenType::Identifier);
+        // Save either the keyword or the identifier
+        let t_type: TokenType = KEYWORDS
+            .get(text)
+            .cloned()
+            .unwrap_or(TokenType::Identifier {
+                literal: text.to_string(),
+            });
         self.add_token(t_type);
     }
 
@@ -114,6 +121,7 @@ impl Scanner {
         // Unterminated string
         if self.is_at_end() {
             error::error(self.line, "Unterminated string.");
+            return; // we should not advance for the closing ", nor load the token
         }
 
         // The closing "
@@ -213,5 +221,140 @@ impl Scanner {
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn single_char_token() {
+        let plus = "+".to_string();
+        let mut scanner = Scanner::new(plus);
+        let tokens = scanner.scan_tokens();
+        assert_eq!(tokens[0].t_type, TokenType::Plus);
+    }
+
+    #[test]
+    fn longer_tokens() {
+        let eqeq = "==".to_string();
+        let mut scanner = Scanner::new(eqeq);
+        let tokens = scanner.scan_tokens();
+        assert_eq!(tokens[0].t_type, TokenType::EqualEqual);
+    }
+
+    #[test]
+    fn identifier_token() {
+        let an_ident = "an_ident".to_string();
+        let mut scanner = Scanner::new(an_ident);
+        let tokens = scanner.scan_tokens();
+        assert_eq!(
+            tokens[0].t_type,
+            TokenType::Identifier {
+                literal: "an_ident".to_string()
+            }
+        );
+    }
+
+    #[test]
+    fn keyword_token() {
+        let keyw = "class".to_string();
+        let mut scanner = Scanner::new(keyw);
+        let tokens = scanner.scan_tokens();
+        assert_eq!(tokens[0].t_type, TokenType::Class);
+    }
+
+    #[test]
+    fn literal_string_token() {
+        let mut scanner = Scanner::new("\"quoted text\"".to_string());
+        let tokens = scanner.scan_tokens();
+        assert_eq!(
+            tokens[0].t_type,
+            TokenType::String {
+                literal: r#"quoted text"#.to_string()
+            }
+        );
+    }
+
+    #[test]
+    fn literal_number_token() {
+        let number = "123".to_string();
+        let mut scanner = Scanner::new(number);
+        let tokens = scanner.scan_tokens();
+        assert_eq!(tokens[0].t_type, TokenType::Number { literal: 123.0f64 });
+    }
+
+    #[test]
+    fn expression() {
+        let expr = "1+2".to_string();
+        let mut scanner = Scanner::new(expr);
+        let tokens = scanner.scan_tokens();
+        assert_eq!(tokens[0].t_type, TokenType::Number { literal: 1.0f64 });
+        assert_eq!(tokens[1].t_type, TokenType::Plus);
+        assert_eq!(tokens[2].t_type, TokenType::Number { literal: 2.0f64 });
+    }
+
+    #[test]
+    fn expression_with_whitespaces() {
+        let expr = " 12 * 21 ".to_string();
+        let mut scanner = Scanner::new(expr);
+        let tokens = scanner.scan_tokens();
+        assert_eq!(tokens[0].t_type, TokenType::Number { literal: 12.0f64 });
+        assert_eq!(tokens[1].t_type, TokenType::Star);
+        assert_eq!(tokens[2].t_type, TokenType::Number { literal: 21.0f64 });
+    }
+
+    #[test]
+    fn assignement_with_comment() {
+        let expr = "var a = 1.0; // A comment".to_string();
+        let mut scanner = Scanner::new(expr);
+        let tokens = scanner.scan_tokens();
+        assert_eq!(tokens[0].t_type, TokenType::Var);
+        assert_eq!(
+            tokens[1].t_type,
+            TokenType::Identifier {
+                literal: "a".to_string()
+            }
+        );
+        assert_eq!(tokens[2].t_type, TokenType::Equal);
+        assert_eq!(tokens[3].t_type, TokenType::Number { literal: 1.0f64 });
+        assert_eq!(tokens[4].t_type, TokenType::Semicolon);
+    }
+
+    #[test]
+    fn multiline_statements() {
+        let expr = r#"var a = 1.0;
+            var b = "Hello";"#
+            .to_string();
+        let mut scanner = Scanner::new(expr);
+        let tokens = scanner.scan_tokens();
+        assert_eq!(tokens[0].t_type, TokenType::Var);
+        assert_eq!(
+            tokens[1].t_type,
+            TokenType::Identifier {
+                literal: "a".to_string()
+            }
+        );
+        assert_eq!(tokens[2].t_type, TokenType::Equal);
+        assert_eq!(tokens[3].t_type, TokenType::Number { literal: 1.0f64 });
+        assert_eq!(tokens[4].t_type, TokenType::Semicolon);
+        assert_eq!(tokens[5].t_type, TokenType::Var);
+        assert_eq!(
+            tokens[6].t_type,
+            TokenType::Identifier {
+                literal: "b".to_string()
+            }
+        );
+        assert_eq!(tokens[7].t_type, TokenType::Equal);
+        assert_eq!(
+            tokens[8].t_type,
+            TokenType::String {
+                literal: r#"Hello"#.to_string()
+            }
+        );
+        assert_eq!(tokens[9].t_type, TokenType::Semicolon);
+        assert_eq!(tokens[1].line, 1);
+        assert_eq!(tokens[9].line, 2);
     }
 }

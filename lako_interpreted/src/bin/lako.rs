@@ -32,6 +32,10 @@ fn run_repl() {
 fn run(source: String) {
     let mut scanner = Scanner::new(source);
     let tokens = scanner.scan_tokens();
+
+    for token in tokens {
+        println!("{:?}", token);
+    }
 }
 
 fn main() {
