@@ -4,3 +4,4 @@ rust:
 script:
   - cd lako_interpreted
   - cargo build --verbose 
+  - cargo test --verbose
