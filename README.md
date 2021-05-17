@@ -12,7 +12,10 @@ Second phase will add refinements and capabilities to make it a moderately usefu
 
 ## Interpreted version
 
-Status: Finished & tested scanner and tokenizer. 
+Status: 
+* Finished & tested scanner and tokenizer.
+* Finished Expressions Syntax Tree and tested AST printer. 
+
 
 For now it just prints the tokens back.
 

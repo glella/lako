@@ -10,8 +10,6 @@ pub fn report(line: i32, where_: &str, message: &str) {
     eprintln!("[line {}] Error{}: {}", line, where_, message);
 }
 
-// *** new stuff ==>
-
 pub fn parser_error(token: &Token, message: &str) {
     if token.t_type == TokenType::Eof {
         report(token.line, " at end", message);

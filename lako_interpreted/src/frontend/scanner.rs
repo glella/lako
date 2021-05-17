@@ -156,7 +156,7 @@ impl Scanner {
         true
     }
 
-    // Main helper method to analize each char and determine corresponding tokens
+    // Main helper method to analize each char and determine corresponding token
     fn scan_token(&mut self) {
         let c: char = self.advance();
         match c {
