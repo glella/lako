@@ -13,11 +13,13 @@ Second phase will add refinements and capabilities to make it a moderately usefu
 ## Interpreted version
 
 Status: 
+
 * Finished & tested scanner and tokenizer.
 * Finished Expressions Syntax Tree and tested AST printer. 
+* Finished & tested parser (chap 6).
 
 
-For now it just prints the tokens back.
+For now it just prints the parsed expression back handling precedence and associativity correctly.
 
 
 ###### Usage

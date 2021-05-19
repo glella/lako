@@ -1,3 +1,5 @@
+use lako_interpreted::frontend::expr_ast::AstPrinter;
+use lako_interpreted::frontend::parser::Parser;
 use lako_interpreted::frontend::scanner::Scanner;
 use std::{
     env, fs,
@@ -33,9 +35,10 @@ fn run(source: String) {
     let mut scanner = Scanner::new(source);
     let tokens = scanner.scan_tokens();
 
-    for token in tokens {
-        println!("{:?}", token);
-    }
+    let mut parser = Parser::new(tokens.to_vec());
+    let expr = parser.parse().unwrap();
+    let mut printer = AstPrinter;
+    println!("{}", printer.print(expr).unwrap());
 }
 
 fn main() {
