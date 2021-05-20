@@ -38,12 +38,16 @@ fn run(source: String) {
     let mut parser = Parser::new(tokens.to_vec());
     let expr = match parser.parse() {
         Ok(res) => res,
-        Err(e) => panic!("Parsing error: {:?}", e),
+        //Err(e) => panic!("Parsing error: {:?}", e),
+        Err(e) => {
+            eprintln!("Parsing error: {:?}", e);
+            process::exit(74);
+        }
     };
     let mut printer = AstPrinter;
     match printer.print(expr) {
         Ok(res) => println!("{}", res),
-        Err(e) => println!("Error {:?}", e),
+        Err(e) => eprintln!("Error {:?}", e),
     };
 }
 

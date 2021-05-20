@@ -273,14 +273,148 @@ mod tests {
     use crate::frontend::scanner::Scanner;
 
     #[test]
-    fn test_parser() {
-        let mut scanner = Scanner::new("-123 * 45.67".to_string());
-        let tokens = scanner.scan_tokens().clone();
+    fn test_parser_equality() {
+        // "!=" | "=="
+        // 1 + 3 == 4  ->  (== (+ 1 3) 4)
+        let mut scanner = Scanner::new("1 + 3 == 4".to_string());
+        let mut tokens = scanner.scan_tokens().clone();
+        let mut parser = Parser::new(tokens);
+        let mut statements = parser.parse().expect("Could not parse sample code.");
+        let mut printer = AstPrinter;
+        assert_eq!(printer.print(statements).unwrap(), "(== (+ 1 3) 4)");
+        // 1 + 3 != 2  ->  (!= (+ 1 3) 2)
+        scanner = Scanner::new("1 + 3 != 2".to_string());
+        tokens = scanner.scan_tokens().clone();
+        parser = Parser::new(tokens);
+        statements = parser.parse().expect("Could not parse sample code.");
+        assert_eq!(printer.print(statements).unwrap(), "(!= (+ 1 3) 2)");
+    }
 
+    #[test]
+    fn test_parser_comparison() {
+        // ">" | ">=" | "<" | "<="
+        // 4 > 2  ->  (> 4 2)
+        let mut scanner = Scanner::new("4 > 2".to_string());
+        let mut tokens = scanner.scan_tokens().clone();
+        let mut parser = Parser::new(tokens);
+        let mut statements = parser.parse().expect("Could not parse sample code.");
+        let mut printer = AstPrinter;
+        assert_eq!(printer.print(statements).unwrap(), "(> 4 2)");
+        // 3 >= 3  ->  (>= 3 3)
+        scanner = Scanner::new("3 >= 3".to_string());
+        tokens = scanner.scan_tokens().clone();
+        parser = Parser::new(tokens);
+        statements = parser.parse().expect("Could not parse sample code.");
+        assert_eq!(printer.print(statements).unwrap(), "(>= 3 3)");
+        // 6 < 7  ->  (< 6 7)
+        scanner = Scanner::new("6 < 7".to_string());
+        tokens = scanner.scan_tokens().clone();
+        parser = Parser::new(tokens);
+        statements = parser.parse().expect("Could not parse sample code.");
+        assert_eq!(printer.print(statements).unwrap(), "(< 6 7)");
+        // 8 <= 8  ->  (<= 8 8)
+        scanner = Scanner::new("8 <= 8".to_string());
+        tokens = scanner.scan_tokens().clone();
+        parser = Parser::new(tokens);
+        statements = parser.parse().expect("Could not parse sample code.");
+        assert_eq!(printer.print(statements).unwrap(), "(<= 8 8)");
+    }
+
+    #[test]
+    fn test_parser_term() {
+        //  "-" | "+"
+        // 7 - 2 + 3  ->  (+ (- 7 2) 3)
+        let mut scanner = Scanner::new("7 - 2 + 3".to_string());
+        let tokens = scanner.scan_tokens().clone();
         let mut parser = Parser::new(tokens);
         let statements = parser.parse().expect("Could not parse sample code.");
         let mut printer = AstPrinter;
+        assert_eq!(printer.print(statements).unwrap(), "(+ (- 7 2) 3)");
+    }
 
+    #[test]
+    fn test_parser_factor() {
+        // "/" | "*"
+        // 8 * 2 / 4  ->  (/ (* 8 2) 4)
+        let mut scanner = Scanner::new("8 * 2 / 4".to_string());
+        let tokens = scanner.scan_tokens().clone();
+        let mut parser = Parser::new(tokens);
+        let statements = parser.parse().expect("Could not parse sample code.");
+        let mut printer = AstPrinter;
+        assert_eq!(printer.print(statements).unwrap(), "(/ (* 8 2) 4)");
+    }
+
+    #[test]
+    fn test_parser_unary() {
+        // "!" | "-"
+        // -4 + 5 ->  (+ (- 4) 5)
+        let mut scanner = Scanner::new("-4 + 5".to_string());
+        let mut tokens = scanner.scan_tokens().clone();
+        let mut parser = Parser::new(tokens);
+        let mut statements = parser.parse().expect("Could not parse sample code.");
+        let mut printer = AstPrinter;
+        assert_eq!(printer.print(statements).unwrap(), "(+ (- 4) 5)");
+        // !3  ->  (! 3)
+        scanner = Scanner::new("!3".to_string());
+        tokens = scanner.scan_tokens().clone();
+        parser = Parser::new(tokens);
+        statements = parser.parse().expect("Could not parse sample code.");
+        assert_eq!(printer.print(statements).unwrap(), "(! 3)");
+    }
+
+    #[test]
+    fn test_parser_primary() {
+        // false
+        let mut scanner = Scanner::new("false".to_string());
+        let mut tokens = scanner.scan_tokens().clone();
+        let mut parser = Parser::new(tokens);
+        let mut statements = parser.parse().expect("Could not parse sample code.");
+        let mut printer = AstPrinter;
+        assert_eq!(printer.print(statements).unwrap(), "false");
+        // true
+        scanner = Scanner::new("true".to_string());
+        tokens = scanner.scan_tokens().clone();
+        parser = Parser::new(tokens);
+        statements = parser.parse().expect("Could not parse sample code.");
+        assert_eq!(printer.print(statements).unwrap(), "true");
+        // nil
+        scanner = Scanner::new("nil".to_string());
+        tokens = scanner.scan_tokens().clone();
+        parser = Parser::new(tokens);
+        statements = parser.parse().expect("Could not parse sample code.");
+        assert_eq!(printer.print(statements).unwrap(), "nil");
+        // string
+        scanner = Scanner::new("\"hello\"".to_string());
+        tokens = scanner.scan_tokens().clone();
+        parser = Parser::new(tokens);
+        statements = parser.parse().expect("Could not parse sample code.");
+        assert_eq!(printer.print(statements).unwrap(), "hello");
+        // number
+        scanner = Scanner::new("3.141519".to_string());
+        tokens = scanner.scan_tokens().clone();
+        parser = Parser::new(tokens);
+        statements = parser.parse().expect("Could not parse sample code.");
+        assert_eq!(printer.print(statements).unwrap(), "3.141519");
+    }
+
+    #[test]
+    fn test_parser_grouping() {
+        // (..)
+        let mut scanner = Scanner::new("(2 + 3) * 5".to_string());
+        let tokens = scanner.scan_tokens().clone();
+        let mut parser = Parser::new(tokens);
+        let statements = parser.parse().expect("Could not parse sample code.");
+        let mut printer = AstPrinter;
+        assert_eq!(printer.print(statements).unwrap(), "(* (group (+ 2 3)) 5)");
+    }
+
+    #[test]
+    fn test_parser_sample_code() {
+        let mut scanner = Scanner::new("-123 * 45.67".to_string());
+        let tokens = scanner.scan_tokens().clone();
+        let mut parser = Parser::new(tokens);
+        let statements = parser.parse().expect("Could not parse sample code.");
+        let mut printer = AstPrinter;
         assert_eq!(printer.print(statements).unwrap(), "(* (- 123) 45.67)");
     }
 }
