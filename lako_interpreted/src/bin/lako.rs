@@ -36,9 +36,15 @@ fn run(source: String) {
     let tokens = scanner.scan_tokens();
 
     let mut parser = Parser::new(tokens.to_vec());
-    let expr = parser.parse().unwrap();
+    let expr = match parser.parse() {
+        Ok(res) => res,
+        Err(e) => panic!("Parsing error: {:?}", e),
+    };
     let mut printer = AstPrinter;
-    println!("{}", printer.print(expr).unwrap());
+    match printer.print(expr) {
+        Ok(res) => println!("{}", res),
+        Err(e) => println!("Error {:?}", e),
+    };
 }
 
 fn main() {

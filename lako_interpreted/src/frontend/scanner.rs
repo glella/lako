@@ -32,12 +32,12 @@ impl Scanner {
     }
 
     // Helper methods
-    // Peek next char without advancing
+    // Peek current char without advancing
     fn peek(&self) -> char {
         self.source.chars().nth(self.current).unwrap_or('\0')
     }
 
-    // peek 1 char further from regular peek
+    // peek 1 char further from current
     fn peek_next(&self) -> char {
         self.source.chars().nth(self.current + 1).unwrap_or('\0')
     }
@@ -72,7 +72,6 @@ impl Scanner {
             .get(self.start..self.current)
             .expect("Unexpected end.");
 
-        //let t_type: TokenType = KEYWORDS.get(text).cloned().unwrap_or(TokenType::Identifier);
         // Save either the keyword or the identifier
         let t_type: TokenType = KEYWORDS
             .get(text)

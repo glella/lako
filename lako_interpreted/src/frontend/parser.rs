@@ -34,9 +34,6 @@ impl Parser {
 
     // peeks at current token - returns the current token without consuming it
     fn peek(&self) -> &Token {
-        // self.tokens
-        //     .get(self.current)
-        //     .expect("Tried to peek into the end of token stream.")
         &self.tokens[self.current]
     }
 
@@ -50,9 +47,6 @@ impl Parser {
 
     // returns previous token
     fn previous(&self) -> &Token {
-        // self.tokens
-        //     .get(self.current - 1)
-        //     .expect("There was no previous Token.")
         &self.tokens[self.current - 1]
     }
 
@@ -64,7 +58,7 @@ impl Parser {
         t_type == self.peek().t_type
     }
 
-    // consumers tokens until finding ")". If does not find it returns an error
+    // consumes tokens until finding ")". If does not find it returns error message
     fn consume(&mut self, t_type: TokenType, message: &str) -> Result<Token, Error> {
         if self.check(t_type) {
             Ok(self.advance().clone())
@@ -102,8 +96,8 @@ impl Parser {
         }
     }
 
-    // compares current token to array of arguments - if it matches consumes it and advaces and returns true
-    fn matches(&mut self, token_types: &[TokenType]) -> bool {
+    // compares current token to array of tokens
+    fn t_match(&mut self, token_types: &[TokenType]) -> bool {
         for tt in token_types {
             if self.check(tt.clone()) {
                 self.advance();
@@ -134,7 +128,7 @@ impl Parser {
     fn equality(&mut self) -> Result<Expr, Error> {
         let mut expr = self.comparison()?;
 
-        while self.matches(&[TokenType::BangEqual, TokenType::EqualEqual]) {
+        while self.t_match(&[TokenType::BangEqual, TokenType::EqualEqual]) {
             let op = self.previous().clone();
             let rhs = self.comparison()?;
             expr = Expr::Binary {
@@ -150,7 +144,7 @@ impl Parser {
     fn comparison(&mut self) -> Result<Expr, Error> {
         let mut expr = self.term()?;
 
-        while self.matches(&[
+        while self.t_match(&[
             TokenType::Greater,
             TokenType::GreaterEqual,
             TokenType::Less,
@@ -171,7 +165,7 @@ impl Parser {
     fn term(&mut self) -> Result<Expr, Error> {
         let mut expr = self.factor()?;
 
-        while self.matches(&[TokenType::Minus, TokenType::Plus]) {
+        while self.t_match(&[TokenType::Minus, TokenType::Plus]) {
             let op = self.previous().clone();
             let rhs = self.factor()?;
             expr = Expr::Binary {
@@ -187,7 +181,7 @@ impl Parser {
     fn factor(&mut self) -> Result<Expr, Error> {
         let mut expr = self.unary()?;
 
-        while self.matches(&[TokenType::Slash, TokenType::Star]) {
+        while self.t_match(&[TokenType::Slash, TokenType::Star]) {
             let op = self.previous().clone();
             let rhs = self.unary()?;
             expr = Expr::Binary {
@@ -202,7 +196,7 @@ impl Parser {
     // unary          → ( "!" | "-" ) unary
     //                | primary ;
     fn unary(&mut self) -> Result<Expr, Error> {
-        if self.matches(&[TokenType::Bang, TokenType::Minus]) {
+        if self.t_match(&[TokenType::Bang, TokenType::Minus]) {
             let op = self.previous().clone();
             let rhs = self.unary()?;
             Ok(Expr::Unary {
@@ -256,11 +250,12 @@ impl Parser {
             //     name: self.peek().clone(),
             // },
             TokenType::LeftParen => {
-                let expr = self.expression()?;
+                self.advance(); // if not we enter a recursive loop with '(' and we overflow the stack
+                let expression = self.expression()?;
                 self.consume(TokenType::RightParen, "Expect ')' after expression.")?;
-                Expr::Grouping {
-                    expr: Box::new(expr),
-                }
+                return Ok(Expr::Grouping {
+                    expr: Box::new(expression),
+                });
             }
             _ => return Err(self.error(self.peek(), "Expect expression.")),
         };

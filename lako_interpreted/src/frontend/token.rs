@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::fmt;
 // Lazily evaluated constant HashMap
-// The HashMap will be evaluated once and stored behind a globalstatic reference
+// The HashMap will be evaluated once and stored behind a global static reference
 use lazy_static::lazy_static;
 
 #[derive(Debug, Clone, PartialEq)]
