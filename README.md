@@ -17,6 +17,7 @@ Status:
 * Finished & tested scanner and tokenizer.
 * Finished Expressions Syntax Tree and tested AST printer. 
 * Finished & tested parser (chap 6).
+* resuming...
 
 
 For now it just prints the parsed expression back handling precedence and associativity correctly.
