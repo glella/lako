@@ -1,3 +1,27 @@
+// Defines an Abstract Syntax Tree (AST) for a programming language. The AST is used to represent the structure of
+// a program's syntax in a tree-like structure. The code includes an implementation of a visitor pattern, which allows
+// an algorithm (the visitor) to operate on the nodes of the AST in a flexible and extensible way.
+
+// The AST is defined using an enum called Expr, which represents different types of expressions in the programming
+// language, such as assignments, binary operations, function calls, and literals. Each variant of the Expr enum
+// represents a specific type of expression and contains associated data, such as tokens for identifiers and operators,
+// and boxed expressions for sub-expressions.
+
+// The LiteralValue enum represents the possible values of literal expressions, such as numbers, strings, booleans, and
+// nil (representing the absence of a value).
+
+// The Visitor trait defines a set of methods that can be implemented by visitors to perform operations on the AST nodes.
+// The Expr struct implements a method called accept that takes a mutable reference to a Visitor trait object and uses it
+// to invoke the appropriate method on the visitor for the type of expression being visited.
+
+// The AstPrinter struct is an implementation of the Visitor trait that prints the AST in a human-readable format. It
+// implements the visit_*_expr methods for each type of expression, and uses a parenthesize helper method to wrap
+// expressions in parentheses to ensure correct precedence of operators in the printed output.
+
+// The fmt::Display trait is implemented for both Expr and LiteralValue to provide custom formatting for these types when
+// they are printed using the format! macro or other formatting functions. The fmt::Display trait allows the Expr and
+// LiteralValue types to be formatted as strings, which is useful for debugging and other purposes.
+
 use crate::frontend::error::Error;
 use crate::frontend::token::Token;
 use std::fmt;
