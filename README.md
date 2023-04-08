@@ -7,8 +7,6 @@ Lako means Easy in Croatian/Bosnian.
 
 Follows closely the book to produce an Interpreted and a Bytecode Compiled version as an exercise to learn about Compilers in a practical way.
 
-Second phase will add refinements and capabilities to make it a moderately useful tiny language.
-
 
 ## Interpreted version
 
@@ -17,7 +15,9 @@ Status:
 * Finished & tested scanner and tokenizer.
 * Finished Expressions Syntax Tree and tested AST printer. 
 * Finished & tested parser (chap 6).
-* resuming...
+April 2023 update:
+* Resuming after a loooong period of inactivity. Forgot half of what I wrote.
+* Will restart from scratch evaluating and updating every piece of code - specially the visitor pattern as Rust can implement similar functionality using pattern matching which is much simpler.
 
 
 For now it just prints the parsed expression back handling precedence and associativity correctly.
