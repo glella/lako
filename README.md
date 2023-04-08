@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/glella/lako.svg?branch=main)](https://travis-ci.com/glella/lako)
 
-Small & Easy Programming Language created with Rust based on the awesome book [Crafting Interpreters](https://craftinginterpreters.com/)
+Small & Easy Programming Language written in Rust based on the awesome book [Crafting Interpreters](https://craftinginterpreters.com/)
 
 Lako means Easy in Croatian/Bosnian.
 
