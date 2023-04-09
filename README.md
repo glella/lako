@@ -4,34 +4,39 @@
 
 Small & Easy Programming Language written in Rust based on the awesome book [Crafting Interpreters](https://craftinginterpreters.com/)
 
-Lako means Easy in Croatian/Bosnian.
+Follows closely the book to produce an Interpreted and a Bytecode Compiled version as an exercise to learn about Compilers in a practical way with a deeper understanding of Rust.
 
-Follows closely the book to produce an Interpreted and a Bytecode Compiled version as an exercise to learn about Compilers in a practical way.
+## Whats in a name?
+
+Did not want to name it Lox or Rlox too. While I might extend in future to make it moderately useful.
+Lako means Easy in Croatian/Bosnian - although I am not Croatian or Bosnian it seems a short and simple name to pronounce different from everything else.
 
 ## Interpreted version
 
 Status:
 
-* Finished & tested scanner and tokenizer.
-* Finished Expressions Syntax Tree and tested AST printer.
-* Finished & tested parser (chap 6).
 April 2023 update:
+
 * Resuming after a loooong period of inactivity. Forgot half of what I wrote.
-* Will restart from scratch evaluating and updating every piece of code - specially the visitor pattern looking for ways to implement simmilar functionality in more idiomatic Rust form.
+* Restarted from scratch evaluating and updating every piece of code:
+  * Finished & tested scanner and tokenizer - OK.
 
-For now it just prints the parsed expression back handling precedence and associativity correctly.
+Need to redo - have errors when supposedly this used to work fine:
 
-###### Usage
+* Finished Expressions Syntax Tree and tested AST printer.
+* Finished & tested parser (chap 6). For now it just prints the parsed expression back handling precedence and associativity correctly.
+
+### Usage
 
 As a repl. Just launch Lako. To exit Ctrl-c.
 
-```
+```bash
 ./lako
 ```
 
 With source file. ie with "test.lak":
 
-```
+```bash
 ./lako test.lak
 ```
 
