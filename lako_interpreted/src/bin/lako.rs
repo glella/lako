@@ -13,7 +13,7 @@ fn run_file(path: &str) {
         Ok(bytes) => run(bytes),
         Err(e) => {
             eprintln!("Failed to read file: {:?}", e);
-            process::exit(74);
+            process::exit(5); // IO error
         }
     }
 }
@@ -35,20 +35,22 @@ fn run(source: String) {
     let mut scanner = Scanner::new(source);
     let tokens = scanner.scan_tokens();
 
-    let mut parser = Parser::new(tokens.to_vec());
-    let expr = match parser.parse() {
-        Ok(res) => res,
-        //Err(e) => panic!("Parsing error: {:?}", e),
-        Err(e) => {
-            eprintln!("Parsing error: {:?}", e);
-            process::exit(74);
-        }
-    };
-    let mut printer = AstPrinter;
-    match printer.print(expr) {
-        Ok(res) => println!("{}", res),
-        Err(e) => eprintln!("Error {:?}", e),
-    };
+    // temp
+    println!("{:?}", tokens);
+
+    // let mut parser = Parser::new(tokens.to_vec());
+    // let expr = match parser.parse() {
+    //     Ok(res) => res,
+    //     Err(e) => {
+    //         eprintln!("Parsing error: {:?}", e);
+    //         process::exit(127); // command not found or invalid command
+    //     }
+    // };
+    // let mut printer = AstPrinter;
+    // match printer.print(expr) {
+    //     Ok(res) => println!("{}", res),
+    //     Err(e) => eprintln!("Error {:?}", e),
+    // };
 }
 
 fn main() {
@@ -58,7 +60,7 @@ fn main() {
         2 => run_file(&args[1]),
         _ => {
             eprintln!("Usage: lako [file]");
-            process::exit(64);
+            process::exit(64); // arguments error
         }
     }
 }

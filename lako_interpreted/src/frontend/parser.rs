@@ -73,6 +73,7 @@ impl Parser {
         Error::Parse
     }
 
+    // unused - and don't remember why I coded this
     fn synchronize(&mut self) {
         self.advance();
 

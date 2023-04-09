@@ -84,16 +84,16 @@ impl Scanner {
 
     // Process numbers
     fn number(&mut self) {
-        while self.peek().is_digit(10) {
+        while self.peek().is_ascii_digit() {
             self.advance();
         }
 
         // Look for a fractional part
-        if self.peek() == '.' && self.peek_next().is_digit(10) {
+        if self.peek() == '.' && self.peek_next().is_ascii_digit() {
             // Consume the ".".
             self.advance();
 
-            while self.peek().is_digit(10) {
+            while self.peek().is_ascii_digit() {
                 self.advance();
             }
         }
@@ -211,7 +211,7 @@ impl Scanner {
             '\n' => self.line += 1,
             '"' => self.string(),
             c => {
-                if c.is_digit(10) {
+                if c.is_ascii_digit() {
                     self.number()
                 } else if c.is_alphabetic() || c == '_' {
                     self.identifier()
