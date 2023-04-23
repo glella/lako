@@ -35,7 +35,7 @@ fn run(source: String) {
     let mut scanner = Scanner::new(source);
     let tokens = scanner.scan_tokens();
 
-    // temp
+    // temp x debug - scanner works correctly
     println!("{:?}", tokens);
 
     // let mut parser = Parser::new(tokens.to_vec());
